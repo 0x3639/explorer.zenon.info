@@ -36,6 +36,39 @@ const SubscriptionNotificationSchema = z.object({
   }),
 });
 
+// Cache TTL constants (in milliseconds)
+const CACHE_TTL = {
+  MOMENTUM: 5 * 60 * 1000,      // 5 minutes - immutable once confirmed
+  ACCOUNT_BLOCK: 5 * 60 * 1000, // 5 minutes - immutable once confirmed
+  TOKEN: 5 * 60 * 1000,         // 5 minutes - token info rarely changes
+  ACCOUNT_INFO: 30 * 1000,      // 30 seconds - balances can change
+  LIST: 10 * 1000,              // 10 seconds - lists change frequently
+  PILLAR: 60 * 1000,            // 1 minute - pillar info updates periodically
+};
+
+// Simple in-memory cache with TTL
+class RequestCache {
+  private cache = new Map<string, { data: unknown; expires: number }>();
+
+  get<T>(key: string): T | null {
+    const entry = this.cache.get(key);
+    if (!entry) return null;
+    if (Date.now() > entry.expires) {
+      this.cache.delete(key);
+      return null;
+    }
+    return entry.data as T;
+  }
+
+  set(key: string, data: unknown, ttlMs: number): void {
+    this.cache.set(key, { data, expires: Date.now() + ttlMs });
+  }
+
+  clear(): void {
+    this.cache.clear();
+  }
+}
+
 type MessageHandler = (response: JsonRpcResponse<unknown>) => void;
 type SubscriptionHandler = (data: unknown) => void;
 
@@ -52,6 +85,7 @@ class ZenonClient {
   private connectionPromise: Promise<void> | null = null;
   private isConnecting = false;
   private currentStatus: 'connecting' | 'connected' | 'disconnected' | 'error' = 'disconnected';
+  private cache = new RequestCache();
 
   isConnected(): boolean {
     return this.ws !== null && this.ws.readyState === WebSocket.OPEN;
@@ -193,6 +227,18 @@ class ZenonClient {
     }
     this.pendingRequests.clear();
     this.subscriptionHandlers.clear();
+    this.cache.clear();
+  }
+
+  // Helper for cached requests
+  private async sendCached<T>(cacheKey: string, ttl: number, method: string, params?: unknown[]): Promise<T> {
+    const cached = this.cache.get<T>(cacheKey);
+    if (cached !== null) {
+      return cached;
+    }
+    const result = await this.send<T>(method, params);
+    this.cache.set(cacheKey, result, ttl);
+    return result;
   }
 
   private send<T>(method: string, params?: unknown[]): Promise<T> {
@@ -232,65 +278,145 @@ class ZenonClient {
 
   // Ledger Methods
   async getFrontierMomentum(): Promise<Momentum> {
+    // Not cached - always needs latest
     return this.send<Momentum>('ledger.getFrontierMomentum');
   }
 
   async getMomentumsByHeight(height: number, count: number): Promise<MomentumList> {
-    return this.send<MomentumList>('ledger.getMomentumsByHeight', [height, count]);
+    // Cached - momentum data is immutable
+    return this.sendCached<MomentumList>(
+      `momentum:height:${height}:${count}`,
+      CACHE_TTL.MOMENTUM,
+      'ledger.getMomentumsByHeight',
+      [height, count]
+    );
   }
 
   async getMomentumsByPage(pageIndex: number, pageSize: number): Promise<MomentumList> {
-    return this.send<MomentumList>('ledger.getMomentumsByPage', [pageIndex, pageSize]);
+    // Short cache - page 0 changes frequently with new momentums
+    return this.sendCached<MomentumList>(
+      `momentum:page:${pageIndex}:${pageSize}`,
+      pageIndex === 0 ? CACHE_TTL.LIST : CACHE_TTL.MOMENTUM,
+      'ledger.getMomentumsByPage',
+      [pageIndex, pageSize]
+    );
   }
 
   async getMomentumByHash(hash: string): Promise<Momentum> {
-    return this.send<Momentum>('ledger.getMomentumByHash', [hash]);
+    // Cached - momentum data is immutable once confirmed
+    return this.sendCached<Momentum>(
+      `momentum:hash:${hash}`,
+      CACHE_TTL.MOMENTUM,
+      'ledger.getMomentumByHash',
+      [hash]
+    );
   }
 
   async getDetailedMomentumsByHeight(height: number, count: number): Promise<{ list: Array<{ momentum: Momentum; blocks: AccountBlockList }> }> {
-    return this.send('ledger.getDetailedMomentumsByHeight', [height, count]);
+    // Cached - detailed momentum data is immutable
+    return this.sendCached(
+      `momentum:detailed:${height}:${count}`,
+      CACHE_TTL.MOMENTUM,
+      'ledger.getDetailedMomentumsByHeight',
+      [height, count]
+    );
   }
 
   // Account Block Methods
   async getAccountBlocksByPage(address: string, pageIndex: number, pageSize: number): Promise<AccountBlockList> {
-    return this.send<AccountBlockList>('ledger.getAccountBlocksByPage', [address, pageIndex, pageSize]);
+    // Short cache - account blocks can be added frequently
+    return this.sendCached<AccountBlockList>(
+      `blocks:${address}:${pageIndex}:${pageSize}`,
+      CACHE_TTL.LIST,
+      'ledger.getAccountBlocksByPage',
+      [address, pageIndex, pageSize]
+    );
   }
 
   async getAccountBlockByHash(hash: string): Promise<import('@/types/zenon').AccountBlock> {
-    return this.send('ledger.getAccountBlockByHash', [hash]);
+    // Cached - block data is immutable once confirmed
+    return this.sendCached(
+      `block:${hash}`,
+      CACHE_TTL.ACCOUNT_BLOCK,
+      'ledger.getAccountBlockByHash',
+      [hash]
+    );
   }
 
   async getAccountInfoByAddress(address: string): Promise<AccountInfo> {
-    return this.send<AccountInfo>('ledger.getAccountInfoByAddress', [address]);
+    // Short cache - balances can change
+    return this.sendCached<AccountInfo>(
+      `account:${address}`,
+      CACHE_TTL.ACCOUNT_INFO,
+      'ledger.getAccountInfoByAddress',
+      [address]
+    );
   }
 
   async getUnreceivedBlocksByAddress(address: string, pageIndex: number, pageSize: number): Promise<AccountBlockList> {
-    return this.send<AccountBlockList>('ledger.getUnreceivedBlocksByAddress', [address, pageIndex, pageSize]);
+    // Short cache - unreceived blocks change when received
+    return this.sendCached<AccountBlockList>(
+      `unreceived:${address}:${pageIndex}:${pageSize}`,
+      CACHE_TTL.LIST,
+      'ledger.getUnreceivedBlocksByAddress',
+      [address, pageIndex, pageSize]
+    );
   }
 
   // Embedded Contract Methods
   async getAllPillars(pageIndex: number, pageSize: number): Promise<PillarList> {
-    return this.send<PillarList>('embedded.pillar.getAll', [pageIndex, pageSize]);
+    // Medium cache - pillar list doesn't change often
+    return this.sendCached<PillarList>(
+      `pillars:${pageIndex}:${pageSize}`,
+      CACHE_TTL.PILLAR,
+      'embedded.pillar.getAll',
+      [pageIndex, pageSize]
+    );
   }
 
   async getPillarByName(name: string): Promise<import('@/types/zenon').Pillar> {
-    return this.send('embedded.pillar.getByName', [name]);
+    // Medium cache - pillar info doesn't change often
+    return this.sendCached(
+      `pillar:${name}`,
+      CACHE_TTL.PILLAR,
+      'embedded.pillar.getByName',
+      [name]
+    );
   }
 
   async getAllActiveSentinels(pageIndex: number, pageSize: number): Promise<SentinelList> {
-    return this.send<SentinelList>('embedded.sentinel.getAllActive', [pageIndex, pageSize]);
+    // Medium cache - sentinel list doesn't change often
+    return this.sendCached<SentinelList>(
+      `sentinels:${pageIndex}:${pageSize}`,
+      CACHE_TTL.PILLAR,
+      'embedded.sentinel.getAllActive',
+      [pageIndex, pageSize]
+    );
   }
 
   async getAllTokens(pageIndex: number, pageSize: number): Promise<TokenList> {
-    return this.send<TokenList>('embedded.token.getAll', [pageIndex, pageSize]);
+    // Long cache - token list rarely changes
+    return this.sendCached<TokenList>(
+      `tokens:${pageIndex}:${pageSize}`,
+      CACHE_TTL.TOKEN,
+      'embedded.token.getAll',
+      [pageIndex, pageSize]
+    );
   }
 
   async getTokenByZts(zts: string): Promise<import('@/types/zenon').Token> {
-    return this.send('embedded.token.getByZts', [zts]);
+    // Long cache - token info rarely changes
+    return this.sendCached(
+      `token:${zts}`,
+      CACHE_TTL.TOKEN,
+      'embedded.token.getByZts',
+      [zts]
+    );
   }
 
   // Stats Methods
   async getSyncInfo(): Promise<SyncInfo> {
+    // Not cached - needs real-time sync status
     return this.send<SyncInfo>('stats.syncInfo');
   }
 
