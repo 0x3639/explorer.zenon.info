@@ -1,26 +1,104 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #121212;
+  --background-secondary: #1a1a1a;
+  --background-card: #1e1e1e;
+  --foreground: #ffffff;
+  --foreground-secondary: #9ca3af;
+  --accent: #7fff00;
+  --accent-hover: #6be600;
+  --header-bg: #7fff00;
+  --border: #2a2a2a;
+  --table-row-alt: #161616;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-background-secondary: var(--background-secondary);
+  --color-background-card: var(--background-card);
   --color-foreground: var(--foreground);
+  --color-foreground-secondary: var(--foreground-secondary);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-header-bg: var(--header-bg);
+  --color-border: var(--border);
+  --color-table-row-alt: var(--table-row-alt);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3a3a3a;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4a4a4a;
+}
+
+/* Smooth transitions - only apply to interactive elements, not during initial load */
+a, button, input, select, textarea,
+.table-row-hover, .hash-link {
+  transition-property: background-color, border-color, color, fill, stroke, opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Prevent white flash on page load */
+html {
+  background-color: #121212;
+  color-scheme: dark;
+}
+
+/* Disable transitions on initial page load */
+.no-transitions * {
+  transition: none !important;
+}
+
+/* Table hover effect */
+.table-row-hover:hover {
+  background-color: rgba(127, 255, 0, 0.05);
+}
+
+/* Hash link styling */
+.hash-link {
+  color: var(--accent);
+  font-family: var(--font-mono), monospace;
+  text-decoration: none;
+}
+
+.hash-link:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+/* Pulse animation for connection indicator */
+@keyframes pulse-green {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.pulse-green {
+  animation: pulse-green 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
