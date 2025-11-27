@@ -1,5 +1,6 @@
 // Zenon Network WebSocket API Client
 
+import { z } from 'zod';
 import type {
   JsonRpcRequest,
   JsonRpcResponse,
@@ -13,7 +14,27 @@ import type {
   SyncInfo,
 } from '@/types/zenon';
 
-const DEFAULT_NODE = 'wss://my.hc1node.com:35998';
+const DEFAULT_NODE = process.env.NEXT_PUBLIC_ZENON_NODE_URL || 'wss://my.hc1node.com:35998';
+
+// Zod schemas for runtime validation of WebSocket responses
+const JsonRpcResponseSchema = z.object({
+  jsonrpc: z.literal('2.0'),
+  id: z.number(),
+  result: z.any().optional(),
+  error: z.object({
+    code: z.number(),
+    message: z.string(),
+  }).optional(),
+});
+
+const SubscriptionNotificationSchema = z.object({
+  jsonrpc: z.literal('2.0'),
+  method: z.literal('ledger.subscription'),
+  params: z.object({
+    subscription: z.string(),
+    result: z.array(z.any()),
+  }),
+});
 
 type MessageHandler = (response: JsonRpcResponse<unknown>) => void;
 type SubscriptionHandler = (data: unknown) => void;
@@ -109,22 +130,30 @@ class ZenonClient {
 
         this.ws.onmessage = (event) => {
           try {
-            const response = JSON.parse(event.data) as JsonRpcResponse;
+            const rawData = JSON.parse(event.data);
 
-            // Handle subscription notifications
-            if ('method' in response && (response as { method: string }).method === 'ledger.subscription') {
-              const params = (response as unknown as { params: { subscription: string; result: unknown[] } }).params;
-              const handler = this.subscriptionHandlers.get(params.subscription);
-              if (handler && params.result) {
-                params.result.forEach((item) => handler(item));
+            // Try to parse as subscription notification first
+            const subscriptionResult = SubscriptionNotificationSchema.safeParse(rawData);
+            if (subscriptionResult.success) {
+              const { subscription, result } = subscriptionResult.data.params;
+              const handler = this.subscriptionHandlers.get(subscription);
+              if (handler && result) {
+                result.forEach((item) => handler(item));
               }
               return;
             }
 
-            // Handle regular responses
+            // Parse as regular JSON-RPC response
+            const responseResult = JsonRpcResponseSchema.safeParse(rawData);
+            if (!responseResult.success) {
+              console.error('Invalid JSON-RPC response:', responseResult.error);
+              return;
+            }
+
+            const response = responseResult.data;
             const handler = this.pendingRequests.get(response.id);
             if (handler) {
-              handler(response);
+              handler(response as JsonRpcResponse);
               this.pendingRequests.delete(response.id);
             }
           } catch (error) {
@@ -195,7 +224,7 @@ class ZenonClient {
       setTimeout(() => {
         if (this.pendingRequests.has(id)) {
           this.pendingRequests.delete(id);
-          reject(new Error('Request timeout'));
+          reject(new Error(`Request timeout after 30s: ${method}`));
         }
       }, 30000);
     });
