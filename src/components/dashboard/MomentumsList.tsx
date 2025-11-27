@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, memo } from 'react';
 import { Card } from '@/components/ui/Card';
 import { HashLink, MomentumHeightLink } from '@/components/ui/HashLink';
 import { formatRelativeTime, formatTimestamp } from '@/lib/utils';
@@ -29,7 +29,7 @@ interface MomentumsListProps {
   isConnected?: boolean;
 }
 
-export function MomentumsList({ isConnected = false }: MomentumsListProps) {
+export const MomentumsList = memo(function MomentumsList({ isConnected = false }: MomentumsListProps) {
   const [momentums, setMomentums] = useState<Momentum[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -106,4 +106,4 @@ export function MomentumsList({ isConnected = false }: MomentumsListProps) {
       ))}
     </Card>
   );
-}
+});

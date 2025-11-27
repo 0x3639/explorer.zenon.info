@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState, memo } from 'react';
 import Link from 'next/link';
 import { truncateHash, truncateAddress, copyToClipboard } from '@/lib/utils';
 
@@ -16,7 +16,7 @@ interface HashLinkProps {
   noTruncate?: boolean;
 }
 
-export function HashLink({
+export const HashLink = memo(function HashLink({
   hash,
   href,
   type = 'hash',
@@ -127,7 +127,7 @@ export function HashLink({
   }
 
   return content;
-}
+});
 
 // Convenience component for momentum height links
 interface MomentumHeightLinkProps {
@@ -136,7 +136,7 @@ interface MomentumHeightLinkProps {
   showCopy?: boolean;
 }
 
-export function MomentumHeightLink({ height, className = '', showCopy = false }: MomentumHeightLinkProps) {
+export const MomentumHeightLink = memo(function MomentumHeightLink({ height, className = '', showCopy = false }: MomentumHeightLinkProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async (e: React.MouseEvent) => {
@@ -194,4 +194,4 @@ export function MomentumHeightLink({ height, className = '', showCopy = false }:
       )}
     </span>
   );
-}
+});

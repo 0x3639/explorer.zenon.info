@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState, memo } from 'react';
 
 interface Column<T> {
   key: string;
@@ -19,7 +19,7 @@ interface TableProps<T> {
   loading?: boolean;
 }
 
-export function Table<T>({
+function TableComponent<T>({
   columns,
   data,
   keyExtractor,
@@ -141,3 +141,6 @@ export function Table<T>({
     </div>
   );
 }
+
+// Memoize the Table component to prevent unnecessary re-renders
+export const Table = memo(TableComponent) as typeof TableComponent;

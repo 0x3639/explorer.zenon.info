@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback, useRef, memo } from 'react';
 import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
 import { HashLink } from '@/components/ui/HashLink';
@@ -30,7 +30,7 @@ interface TransactionsListProps {
   isConnected?: boolean;
 }
 
-export function TransactionsList({ isConnected = false }: TransactionsListProps) {
+export const TransactionsList = memo(function TransactionsList({ isConnected = false }: TransactionsListProps) {
   const [transactions, setTransactions] = useState<AccountBlock[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -165,4 +165,4 @@ export function TransactionsList({ isConnected = false }: TransactionsListProps)
       ))}
     </Card>
   );
-}
+});
