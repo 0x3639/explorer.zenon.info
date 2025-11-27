@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
 import { HashLink } from '@/components/ui/HashLink';
 import { TokenSymbolLink } from '@/components/ui/TokenSymbolLink';
+import { JsonViewer } from '@/components/ui/JsonViewer';
 import { formatFullTimestamp, formatTokenAmount } from '@/lib/utils';
 import { useZenonWebSocket } from '@/hooks/useZenonWebSocket';
 import { zenonClient } from '@/lib/zenon-api';
@@ -192,40 +193,7 @@ export default function TransactionDetailPage() {
             </div>
 
             {/* Raw Data */}
-            <div>
-              <h2 className="text-white font-medium mb-3">Raw data</h2>
-              <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a] overflow-hidden">
-                <pre className="p-4 text-sm overflow-x-auto">
-                  <code className="text-gray-300">
-                    {JSON.stringify(transaction, null, 2)
-                      .split('\n')
-                      .map((line, i) => {
-                        // Highlight different parts
-                        let highlightedLine = line
-                          // Highlight hash values (64 char hex strings)
-                          .replace(/"([a-f0-9]{64})"/g, '"<span class="text-[#7fff00]">$1</span>"')
-                          // Highlight numbers
-                          .replace(/: (\d+)/g, ': <span class="text-yellow-400">$1</span>')
-                          // Highlight addresses (z1...)
-                          .replace(/"(z1[a-z0-9]+)"/g, '"<span class="text-[#7fff00]">$1</span>"')
-                          // Highlight token standards (zts1...)
-                          .replace(/"(zts1[a-z0-9]+)"/g, '"<span class="text-[#7fff00]">$1</span>"')
-                          // Highlight empty strings
-                          .replace(/""/g, '<span class="text-gray-500">""</span>');
-
-                        return (
-                          <div key={i} className="flex">
-                            <span className="text-gray-600 w-8 shrink-0 select-none text-right pr-4">
-                              {i + 1}
-                            </span>
-                            <span dangerouslySetInnerHTML={{ __html: highlightedLine }} />
-                          </div>
-                        );
-                      })}
-                  </code>
-                </pre>
-              </div>
-            </div>
+            <JsonViewer data={transaction} title="Raw data" />
           </div>
         ) : null}
       </main>
