@@ -42,6 +42,7 @@ export default function SentinelsPage() {
     {
       key: 'address',
       header: 'Address',
+      mobilePrimary: true,
       render: (sentinel: Sentinel) => (
         <HashLink hash={sentinel.owner} type="address" linkToDetail showCopy />
       ),
@@ -49,6 +50,7 @@ export default function SentinelsPage() {
     {
       key: 'registrationTime',
       header: 'Registration time',
+      mobileLabel: 'Registered',
       render: (sentinel: Sentinel) => (
         <span className="text-gray-300">
           {formatFullTimestamp(sentinel.registrationTimestamp)}

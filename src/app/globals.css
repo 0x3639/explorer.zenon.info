@@ -102,3 +102,13 @@ html {
 .pulse-green {
   animation: pulse-green 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* Hide scrollbar utility for horizontal scroll areas */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

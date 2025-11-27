@@ -60,19 +60,22 @@ export default function PillarsPage() {
 
   const columns = [
     {
+      key: 'name',
+      header: 'Name',
+      mobilePrimary: true,
+      render: (pillar: Pillar) => (
+        <Link href={`/pillar/${pillar.ownerAddress}`} className="text-white font-medium hover:text-[#7fff00]">
+          {pillar.name}
+        </Link>
+      ),
+    },
+    {
       key: 'address',
       header: 'Address',
       render: (pillar: Pillar) => (
         <Link href={`/pillar/${pillar.ownerAddress}`} className="text-[#7fff00] font-mono text-sm hover:underline">
           {truncateAddress(pillar.ownerAddress)}
         </Link>
-      ),
-    },
-    {
-      key: 'name',
-      header: 'Name',
-      render: (pillar: Pillar) => (
-        <span className="text-white font-medium">{pillar.name}</span>
       ),
     },
     {
@@ -89,6 +92,7 @@ export default function PillarsPage() {
       key: 'momentums',
       header: 'Target / Produced Momentums',
       className: 'text-center',
+      mobileLabel: 'Momentums',
       render: (pillar: Pillar) => (
         <span className="text-gray-300">
           {pillar.currentStats.expectedMomentums} / {pillar.currentStats.producedMomentums}

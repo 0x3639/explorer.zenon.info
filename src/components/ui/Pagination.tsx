@@ -25,37 +25,41 @@ export function Pagination({
   const canGoNext = currentPage < totalPages - 1;
 
   return (
-    <div className="flex items-center justify-end gap-6 py-4 px-2 text-sm text-gray-400">
-      {/* Page size selector */}
-      {onPageSizeChange && (
-        <div className="flex items-center gap-2">
-          <span>Items per page:</span>
-          <select
-            value={pageSize}
-            onChange={(e) => onPageSizeChange(Number(e.target.value))}
-            className="bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1 text-white focus:outline-none focus:border-[#7fff00]"
-          >
-            {pageSizeOptions.map((size) => (
-              <option key={size} value={size}>
-                {size}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3 sm:gap-6 py-4 px-2 text-sm text-gray-400">
+      {/* Top row on mobile: Page size + Page info */}
+      <div className="flex items-center justify-between sm:justify-end sm:gap-6">
+        {/* Page size selector */}
+        {onPageSizeChange && (
+          <div className="flex items-center gap-2">
+            <span className="hidden sm:inline">Items per page:</span>
+            <span className="sm:hidden">Per page:</span>
+            <select
+              value={pageSize}
+              onChange={(e) => onPageSizeChange(Number(e.target.value))}
+              className="bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1.5 text-white focus:outline-none focus:border-[#7fff00]"
+            >
+              {pageSizeOptions.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
-      {/* Page info */}
-      <span>
-        {start} – {end} of {totalItems.toLocaleString()}
-      </span>
+        {/* Page info */}
+        <span className="whitespace-nowrap">
+          {start} – {end} of {totalItems.toLocaleString()}
+        </span>
+      </div>
 
-      {/* Navigation buttons */}
-      <div className="flex items-center gap-1">
+      {/* Bottom row on mobile: Navigation buttons */}
+      <div className="flex items-center justify-center sm:justify-end gap-1">
         {/* First page */}
         <button
           onClick={() => onPageChange(0)}
           disabled={!canGoPrev}
-          className="p-1 rounded hover:bg-[#2a2a2a] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="p-2 sm:p-1 rounded hover:bg-[#2a2a2a] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           aria-label="First page"
         >
           <svg
@@ -74,7 +78,7 @@ export function Pagination({
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={!canGoPrev}
-          className="p-1 rounded hover:bg-[#2a2a2a] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="p-2 sm:p-1 rounded hover:bg-[#2a2a2a] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           aria-label="Previous page"
         >
           <svg
@@ -89,11 +93,16 @@ export function Pagination({
           </svg>
         </button>
 
+        {/* Page indicator (mobile) */}
+        <span className="px-3 py-1 text-white font-medium sm:hidden">
+          {currentPage + 1} / {totalPages || 1}
+        </span>
+
         {/* Next page */}
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={!canGoNext}
-          className="p-1 rounded hover:bg-[#2a2a2a] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="p-2 sm:p-1 rounded hover:bg-[#2a2a2a] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           aria-label="Next page"
         >
           <svg
@@ -112,7 +121,7 @@ export function Pagination({
         <button
           onClick={() => onPageChange(totalPages - 1)}
           disabled={!canGoNext}
-          className="p-1 rounded hover:bg-[#2a2a2a] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="p-2 sm:p-1 rounded hover:bg-[#2a2a2a] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           aria-label="Last page"
         >
           <svg

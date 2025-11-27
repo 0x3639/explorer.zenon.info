@@ -156,33 +156,51 @@ export default function MomentumDetailPage() {
             {/* Momentum Info */}
             <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a] p-6">
               <div className="space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                  <span className="text-gray-400 w-40 shrink-0">Momentum Hash:</span>
-                  <HashLink hash={momentum.hash} truncateStart={64} type="momentum" showCopy isCurrentPage />
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                  <span className="text-gray-400 text-sm sm:text-base sm:w-40 shrink-0">Momentum Hash:</span>
+                  {/* Truncated on mobile/tablet, full on desktop */}
+                  <span className="lg:hidden">
+                    <HashLink hash={momentum.hash} truncateStart={28} type="momentum" showCopy isCurrentPage />
+                  </span>
+                  <span className="hidden lg:inline">
+                    <HashLink hash={momentum.hash} noTruncate type="momentum" showCopy isCurrentPage />
+                  </span>
                 </div>
 
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                  <span className="text-gray-400 w-40 shrink-0">Momentum Height:</span>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                  <span className="text-gray-400 text-sm sm:text-base sm:w-40 shrink-0">Momentum Height:</span>
                   <span className="text-[#7fff00] font-mono">
                     {momentum.height.toLocaleString()}
                   </span>
                 </div>
 
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                  <span className="text-gray-400 w-40 shrink-0">Timestamp:</span>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                  <span className="text-gray-400 text-sm sm:text-base sm:w-40 shrink-0">Timestamp:</span>
                   <span className="text-white">
                     {formatFullTimestamp(momentum.timestamp)}
                   </span>
                 </div>
 
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                  <span className="text-gray-400 w-40 shrink-0">Producer:</span>
-                  <HashLink hash={momentum.producer} type="address" noTruncate linkToDetail showCopy />
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                  <span className="text-gray-400 text-sm sm:text-base sm:w-40 shrink-0">Producer:</span>
+                  {/* Truncated on mobile/tablet, full on desktop */}
+                  <span className="lg:hidden">
+                    <HashLink hash={momentum.producer} type="address" linkToDetail showCopy />
+                  </span>
+                  <span className="hidden lg:inline">
+                    <HashLink hash={momentum.producer} type="address" noTruncate linkToDetail showCopy />
+                  </span>
                 </div>
 
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                  <span className="text-gray-400 w-40 shrink-0">Previous Hash:</span>
-                  <HashLink hash={momentum.previousHash} truncateStart={64} type="momentum" linkToDetail showCopy />
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                  <span className="text-gray-400 text-sm sm:text-base sm:w-40 shrink-0">Previous Hash:</span>
+                  {/* Truncated on mobile/tablet, full on desktop */}
+                  <span className="lg:hidden">
+                    <HashLink hash={momentum.previousHash} truncateStart={28} type="momentum" linkToDetail showCopy />
+                  </span>
+                  <span className="hidden lg:inline">
+                    <HashLink hash={momentum.previousHash} noTruncate type="momentum" linkToDetail showCopy />
+                  </span>
                 </div>
 
               </div>
@@ -210,6 +228,7 @@ export default function MomentumDetailPage() {
                       {
                         key: 'hash',
                         header: 'Transaction Hash',
+                        mobilePrimary: true,
                         render: (tx: AccountBlock) => (
                           <HashLink hash={tx.hash} truncateStart={24} type="transaction" linkToDetail showCopy />
                         ),
@@ -226,6 +245,7 @@ export default function MomentumDetailPage() {
                       {
                         key: 'height',
                         header: 'Height',
+                        mobileLabel: false,
                         render: (tx: AccountBlock) => (
                           <span className="text-gray-300">{tx.height.toLocaleString()}</span>
                         ),
@@ -233,6 +253,7 @@ export default function MomentumDetailPage() {
                       {
                         key: 'timestamp',
                         header: 'Timestamp',
+                        mobileLabel: false,
                         render: () => (
                           <span className="text-gray-300 text-sm">
                             {formatFullTimestamp(momentum.timestamp)}
@@ -268,6 +289,7 @@ export default function MomentumDetailPage() {
                       {
                         key: 'confirmations',
                         header: 'Confirmations',
+                        mobileLabel: 'Confirms',
                         render: (tx: AccountBlock) => (
                           <span className="text-[#7fff00]">{getConfirmations(tx)}</span>
                         ),
@@ -275,6 +297,7 @@ export default function MomentumDetailPage() {
                       {
                         key: 'from',
                         header: 'From Address',
+                        mobileLabel: 'From',
                         render: (tx: AccountBlock) => (
                           <HashLink hash={tx.address} type="address" linkToDetail showCopy />
                         ),
@@ -282,6 +305,7 @@ export default function MomentumDetailPage() {
                       {
                         key: 'to',
                         header: 'To Address',
+                        mobileLabel: 'To',
                         render: (tx: AccountBlock) => (
                           <HashLink hash={tx.toAddress} type="address" linkToDetail showCopy />
                         ),

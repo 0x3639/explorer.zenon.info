@@ -52,6 +52,7 @@ export default function MomentumsPage() {
     {
       key: 'height',
       header: 'Momentum Height',
+      mobilePrimary: true,
       render: (momentum: Momentum) => (
         <MomentumHeightLink height={momentum.height} className="font-medium" showCopy />
       ),
@@ -59,6 +60,7 @@ export default function MomentumsPage() {
     {
       key: 'hash',
       header: 'Momentum Hash',
+      mobileLabel: 'Hash',
       render: (momentum: Momentum) => (
         <HashLink hash={momentum.hash} truncateStart={28} type="momentum" linkToDetail showCopy />
       ),
@@ -66,6 +68,7 @@ export default function MomentumsPage() {
     {
       key: 'timestamp',
       header: 'Timestamp',
+      mobileLabel: 'Time',
       render: (momentum: Momentum) => (
         <span className="text-gray-300">
           {formatFullTimestamp(momentum.timestamp)}
@@ -76,6 +79,7 @@ export default function MomentumsPage() {
       key: 'txCount',
       header: 'Transaction count',
       className: 'text-right',
+      mobileLabel: 'Tx Count',
       render: (momentum: Momentum) => (
         <span className="text-gray-300">
           {momentum.content?.length || 0}

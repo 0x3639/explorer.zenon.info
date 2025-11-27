@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { ConnectionStatus } from '@/types/zenon';
 import { getSearchUrl, getSearchType } from '@/lib/validators';
+import { MobileMenu } from './MobileMenu';
 
 interface HeaderProps {
   status: ConnectionStatus;
@@ -22,6 +23,7 @@ export function Header({ status }: HeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [showSearch, setShowSearch] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchError, setSearchError] = useState('');
 
@@ -83,6 +85,24 @@ export function Header({ status }: HeaderProps) {
     <header className="bg-[#7fff00] sticky top-0 z-50">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14">
+          {/* Hamburger button (mobile only) */}
+          <button
+            onClick={() => setShowMobileMenu(true)}
+            className="md:hidden p-2 text-black/80 hover:text-black transition-colors -ml-2"
+            aria-label="Open menu"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+
           {/* Logo and Nav */}
           <div className="flex items-center gap-8">
             <Link href="/" className="text-black font-bold text-xl tracking-tight">
@@ -153,24 +173,14 @@ export function Header({ status }: HeaderProps) {
           </div>
         </div>
 
-        {/* Mobile nav */}
-        <nav className="md:hidden flex items-center gap-1 pb-2 overflow-x-auto">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`px-3 py-1 text-sm font-medium text-black/80 hover:text-black whitespace-nowrap ${
-                  isActive ? 'text-black border-b-2 border-black' : ''
-                }`}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
       </div>
+
+      {/* Mobile Menu */}
+      <MobileMenu
+        isOpen={showMobileMenu}
+        onClose={() => setShowMobileMenu(false)}
+        navItems={navItems}
+      />
 
       {/* Search bar overlay */}
       {showSearch && (

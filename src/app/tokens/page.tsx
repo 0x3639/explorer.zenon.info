@@ -68,6 +68,14 @@ export default function ZTSPage() {
 
   const columns = [
     {
+      key: 'symbol',
+      header: 'Symbol',
+      mobilePrimary: true,
+      render: (token: Token) => (
+        <TokenSymbolLink symbol={token.symbol} tokenStandard={token.tokenStandard} />
+      ),
+    },
+    {
       key: 'zts',
       header: 'ZTS',
       render: (token: Token) => (
@@ -78,17 +86,11 @@ export default function ZTSPage() {
       key: 'totalSupply',
       header: 'Total supply',
       sortable: true,
+      mobileLabel: 'Supply',
       render: (token: Token) => (
         <span className="text-gray-300">
           {formatSupply(token.totalSupply, token.decimals)}
         </span>
-      ),
-    },
-    {
-      key: 'symbol',
-      header: 'Symbol',
-      render: (token: Token) => (
-        <TokenSymbolLink symbol={token.symbol} tokenStandard={token.tokenStandard} />
       ),
     },
     {

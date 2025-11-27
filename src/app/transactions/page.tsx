@@ -67,6 +67,7 @@ export default function TransactionsPage() {
     {
       key: 'hash',
       header: 'Transaction Hash',
+      mobilePrimary: true,
       render: (tx: AccountBlock) => (
         <HashLink hash={tx.hash} truncateStart={28} type="transaction" linkToDetail showCopy />
       ),
@@ -109,6 +110,7 @@ export default function TransactionsPage() {
     {
       key: 'timestamp',
       header: 'Timestamp',
+      mobileLabel: 'Time',
       render: (tx: AccountBlock) => (
         <span className="text-gray-300">
           {tx.confirmationDetail?.momentumTimestamp

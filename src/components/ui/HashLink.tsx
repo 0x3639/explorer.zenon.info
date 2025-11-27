@@ -74,7 +74,7 @@ export const HashLink = memo(function HashLink({
       {showCopy && (
         <button
           onClick={handleCopy}
-          className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-[#2a2a2a] rounded"
+          className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-[#2a2a2a] rounded shrink-0"
           title={copied ? 'Copied!' : 'Copy to clipboard'}
         >
           {copied ? (
@@ -160,7 +160,7 @@ export const MomentumHeightLink = memo(function MomentumHeightLink({ height, cla
       {showCopy && (
         <button
           onClick={handleCopy}
-          className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-[#2a2a2a] rounded"
+          className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-[#2a2a2a] rounded shrink-0"
           title={copied ? 'Copied!' : 'Copy to clipboard'}
         >
           {copied ? (

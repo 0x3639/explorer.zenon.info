@@ -170,34 +170,34 @@ export default function PillarDetailPage() {
             {/* Pillar Information */}
             <div>
               <h2 className="text-white font-medium mb-3">Pillar Information</h2>
-              <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a] p-6">
+              <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a] p-4 sm:p-6">
                 <div className="space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <span className="text-gray-400 w-48 shrink-0">Name:</span>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                    <span className="text-gray-400 text-sm sm:text-base sm:w-48 shrink-0">Name:</span>
                     <span className="text-white font-medium">{pillar.name}</span>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <span className="text-gray-400 w-48 shrink-0">Address:</span>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                    <span className="text-gray-400 text-sm sm:text-base sm:w-48 shrink-0">Address:</span>
                     <div className="flex items-center gap-2">
                       <HashLink hash={pillar.ownerAddress} type="address" noTruncate showCopy isCurrentPage />
                     </div>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <span className="text-gray-400 w-48 shrink-0">Weight:</span>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                    <span className="text-gray-400 text-sm sm:text-base sm:w-48 shrink-0">Weight:</span>
                     <span className="text-white font-mono">
                       {formatTokenAmount(pillar.weight, 8)} ZNN
                     </span>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <span className="text-gray-400 w-48 shrink-0">Target Momentums:</span>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                    <span className="text-gray-400 text-sm sm:text-base sm:w-48 shrink-0">Target Momentums:</span>
                     <span className="text-white font-mono">{pillar.currentStats.expectedMomentums}</span>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <span className="text-gray-400 w-48 shrink-0">Produced Momentums:</span>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                    <span className="text-gray-400 text-sm sm:text-base sm:w-48 shrink-0">Produced Momentums:</span>
                     <span className="text-white font-mono">{pillar.currentStats.producedMomentums}</span>
                   </div>
                 </div>
@@ -205,13 +205,13 @@ export default function PillarDetailPage() {
             </div>
 
             {/* Tab Navigation */}
-            <div className="border-b border-[#2a2a2a]">
-              <div className="flex gap-8">
+            <div className="border-b border-[#2a2a2a] -mx-4 px-4 sm:mx-0 sm:px-0">
+              <div className="flex gap-4 sm:gap-8 overflow-x-auto scrollbar-hide">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`py-3 text-sm font-medium border-b-2 transition-colors ${
+                    className={`py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                       activeTab === tab.id
                         ? 'text-white border-[#7fff00]'
                         : 'text-gray-400 border-transparent hover:text-white'
@@ -244,6 +244,7 @@ export default function PillarDetailPage() {
                       {
                         key: 'hash',
                         header: 'Transaction Hash',
+                        mobilePrimary: true,
                         render: (tx: AccountBlock) => (
                           <HashLink hash={tx.hash} truncateStart={24} type="transaction" linkToDetail showCopy />
                         ),
@@ -260,6 +261,7 @@ export default function PillarDetailPage() {
                       {
                         key: 'height',
                         header: 'Height',
+                        mobileLabel: false,
                         render: (tx: AccountBlock) => (
                           <span className="text-gray-300">{tx.height.toLocaleString()}</span>
                         ),
@@ -267,6 +269,7 @@ export default function PillarDetailPage() {
                       {
                         key: 'timestamp',
                         header: 'Timestamp',
+                        mobileLabel: false,
                         render: (tx: AccountBlock) => (
                           <span className="text-gray-300 text-sm">
                             {tx.confirmationDetail?.momentumTimestamp
@@ -304,6 +307,7 @@ export default function PillarDetailPage() {
                       {
                         key: 'confirmations',
                         header: 'Confirmations',
+                        mobileLabel: 'Confirms',
                         render: (tx: AccountBlock) => (
                           <span className="text-[#7fff00]">{getConfirmations(tx)}</span>
                         ),
@@ -311,6 +315,7 @@ export default function PillarDetailPage() {
                       {
                         key: 'from',
                         header: 'From Address',
+                        mobileLabel: 'From',
                         render: (tx: AccountBlock) => (
                           <HashLink hash={tx.address} type="address" linkToDetail showCopy />
                         ),
@@ -318,6 +323,7 @@ export default function PillarDetailPage() {
                       {
                         key: 'to',
                         header: 'To Address',
+                        mobileLabel: 'To',
                         render: (tx: AccountBlock) => (
                           <HashLink hash={tx.toAddress} type="address" linkToDetail showCopy />
                         ),
