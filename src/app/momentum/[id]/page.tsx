@@ -177,7 +177,7 @@ export default function MomentumDetailPage() {
 
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                   <span className="text-gray-400 w-40 shrink-0">Producer:</span>
-                  <HashLink hash={momentum.producer} type="address" linkToDetail showCopy />
+                  <HashLink hash={momentum.producer} type="address" noTruncate linkToDetail showCopy />
                 </div>
 
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2">

@@ -186,7 +186,7 @@ export default function AddressDetailPage() {
               <div className="space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                   <span className="text-gray-400 w-40 shrink-0">Address:</span>
-                  <HashLink hash={accountInfo.address} type="address" truncateStart={64} showCopy isCurrentPage />
+                  <HashLink hash={accountInfo.address} type="address" noTruncate showCopy isCurrentPage />
                 </div>
 
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2">
