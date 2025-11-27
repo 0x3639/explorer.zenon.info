@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { ConnectionStatus } from '@/types/zenon';
+import { getSearchUrl, getSearchType } from '@/lib/validators';
 
 interface HeaderProps {
   status: ConnectionStatus;
@@ -22,7 +23,6 @@ export function Header({ status }: HeaderProps) {
   const router = useRouter();
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [darkMode, setDarkMode] = useState(true);
   const [searchError, setSearchError] = useState('');
 
   const handleSearch = (e: React.FormEvent) => {
@@ -32,42 +32,21 @@ export function Header({ status }: HeaderProps) {
 
     if (!query) return;
 
-    // Determine what type of search this is
-    // Address: starts with z1 and is 40 characters
-    if (query.startsWith('z1') && query.length === 40) {
-      router.push(`/address/${query}`);
+    // Use validators to determine search type and URL
+    const searchUrl = getSearchUrl(query);
+
+    if (searchUrl) {
+      router.push(searchUrl);
       setShowSearch(false);
       setSearchQuery('');
       return;
     }
 
-    // Token Standard: starts with zts1
-    if (query.startsWith('zts1')) {
-      router.push(`/token/${query}`);
-      setShowSearch(false);
-      setSearchQuery('');
-      return;
+    // Invalid search - could not determine type
+    const searchType = getSearchType(query);
+    if (!searchType) {
+      setSearchError('Invalid search. Enter an address (z1...), token (zts1...), momentum height, or hash.');
     }
-
-    // Momentum Height: numeric only
-    if (/^\d+$/.test(query)) {
-      router.push(`/momentum/${query}`);
-      setShowSearch(false);
-      setSearchQuery('');
-      return;
-    }
-
-    // Hash: 64 character hex string (could be momentum hash or transaction hash)
-    if (/^[a-fA-F0-9]{64}$/.test(query)) {
-      // Try as transaction first, then momentum - redirect to hash page which handles both
-      router.push(`/hash/${query}`);
-      setShowSearch(false);
-      setSearchQuery('');
-      return;
-    }
-
-    // Invalid search
-    setSearchError('Invalid search. Enter an address (z1...), token (zts1...), momentum height, or hash.');
   };
 
   const getStatusColor = () => {
@@ -171,18 +150,6 @@ export function Header({ status }: HeaderProps) {
               </svg>
             </div>
 
-            {/* Dark mode toggle */}
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="relative w-12 h-6 bg-black/20 rounded-full transition-colors"
-              aria-label="Toggle dark mode"
-            >
-              <span
-                className={`absolute top-0.5 w-5 h-5 bg-black rounded-full transition-transform ${
-                  darkMode ? 'left-6' : 'left-0.5'
-                }`}
-              />
-            </button>
           </div>
         </div>
 
