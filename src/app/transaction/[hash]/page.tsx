@@ -8,13 +8,13 @@ import { HashLink } from '@/components/ui/HashLink';
 import { TokenSymbolLink } from '@/components/ui/TokenSymbolLink';
 import { JsonViewer } from '@/components/ui/JsonViewer';
 import { formatFullTimestamp, formatTokenAmount } from '@/lib/utils';
-import { useZenonWebSocket } from '@/hooks/useZenonWebSocket';
+import { useZenon } from '@/contexts/ZenonProvider';
 import { zenonClient } from '@/lib/zenon-api';
 import type { AccountBlock } from '@/types/zenon';
 
 export default function TransactionDetailPage() {
   const params = useParams();
-  const { status, currentHeight } = useZenonWebSocket();
+  const { status, currentHeight, nodes, selectedNodeUrl, selectNode, addNode, removeNode } = useZenon();
   const [transaction, setTransaction] = useState<AccountBlock | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -58,7 +58,14 @@ export default function TransactionDetailPage() {
 
   return (
     <div className="min-h-screen bg-[#121212]">
-      <Header status={status} />
+      <Header
+        status={status}
+        nodes={nodes}
+        selectedNodeUrl={selectedNodeUrl}
+        onSelectNode={selectNode}
+        onAddNode={addNode}
+        onRemoveNode={removeNode}
+      />
 
       {/* Page Header */}
       <div className="bg-[#7fff00] py-3 px-4 sm:px-6 lg:px-8">

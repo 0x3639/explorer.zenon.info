@@ -7,12 +7,12 @@ import { Table } from '@/components/ui/Table';
 import { Pagination } from '@/components/ui/Pagination';
 import { HashLink } from '@/components/ui/HashLink';
 import { formatFullTimestamp } from '@/lib/utils';
-import { useZenonWebSocket } from '@/hooks/useZenonWebSocket';
+import { useZenon } from '@/contexts/ZenonProvider';
 import { zenonClient } from '@/lib/zenon-api';
 import type { Sentinel } from '@/types/zenon';
 
 export default function SentinelsPage() {
-  const { status } = useZenonWebSocket();
+  const { status, nodes, selectedNodeUrl, selectNode, addNode, removeNode } = useZenon();
   const [sentinels, setSentinels] = useState<Sentinel[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(0);
@@ -66,7 +66,14 @@ export default function SentinelsPage() {
 
   return (
     <div className="min-h-screen bg-[#121212]">
-      <Header status={status} />
+      <Header
+        status={status}
+        nodes={nodes}
+        selectedNodeUrl={selectedNodeUrl}
+        onSelectNode={selectNode}
+        onAddNode={addNode}
+        onRemoveNode={removeNode}
+      />
       <PageHeader title="Sentinels List" />
 
       <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">

@@ -8,12 +8,12 @@ import { Pagination } from '@/components/ui/Pagination';
 import { HashLink } from '@/components/ui/HashLink';
 import { TokenSymbolLink } from '@/components/ui/TokenSymbolLink';
 import { formatNumber } from '@/lib/utils';
-import { useZenonWebSocket } from '@/hooks/useZenonWebSocket';
+import { useZenon } from '@/contexts/ZenonProvider';
 import { zenonClient } from '@/lib/zenon-api';
 import type { Token } from '@/types/zenon';
 
 export default function ZTSPage() {
-  const { status } = useZenonWebSocket();
+  const { status, nodes, selectedNodeUrl, selectNode, addNode, removeNode } = useZenon();
   const [tokens, setTokens] = useState<Token[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(0);
@@ -110,7 +110,14 @@ export default function ZTSPage() {
 
   return (
     <div className="min-h-screen bg-[#121212]">
-      <Header status={status} />
+      <Header
+        status={status}
+        nodes={nodes}
+        selectedNodeUrl={selectedNodeUrl}
+        onSelectNode={selectNode}
+        onAddNode={addNode}
+        onRemoveNode={removeNode}
+      />
       <PageHeader title="ZTS List" />
 
       <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">

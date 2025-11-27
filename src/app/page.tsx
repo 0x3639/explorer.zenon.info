@@ -3,14 +3,21 @@
 import { Header } from '@/components/layout/Header';
 import { MomentumsList } from '@/components/dashboard/MomentumsList';
 import { TransactionsList } from '@/components/dashboard/TransactionsList';
-import { useZenonWebSocket } from '@/hooks/useZenonWebSocket';
+import { useZenon } from '@/contexts/ZenonProvider';
 
 export default function Dashboard() {
-  const { status } = useZenonWebSocket();
+  const { status, nodes, selectedNodeUrl, selectNode, addNode, removeNode } = useZenon();
 
   return (
     <div className="min-h-screen bg-[#121212]">
-      <Header status={status} />
+      <Header
+        status={status}
+        nodes={nodes}
+        selectedNodeUrl={selectedNodeUrl}
+        onSelectNode={selectNode}
+        onAddNode={addNode}
+        onRemoveNode={removeNode}
+      />
 
       {/* Hero Section */}
       <div className="bg-[#1a1a1a] py-12 px-4">

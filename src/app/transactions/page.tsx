@@ -8,12 +8,12 @@ import { Pagination } from '@/components/ui/Pagination';
 import { HashLink } from '@/components/ui/HashLink';
 import { TokenSymbolLink } from '@/components/ui/TokenSymbolLink';
 import { formatFullTimestamp, formatTokenAmount } from '@/lib/utils';
-import { useZenonWebSocket } from '@/hooks/useZenonWebSocket';
+import { useZenon } from '@/contexts/ZenonProvider';
 import { zenonClient } from '@/lib/zenon-api';
 import type { AccountBlock } from '@/types/zenon';
 
 export default function TransactionsPage() {
-  const { status, currentHeight } = useZenonWebSocket();
+  const { status, currentHeight, nodes, selectedNodeUrl, selectNode, addNode, removeNode } = useZenon();
   const [transactions, setTransactions] = useState<AccountBlock[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(0);
@@ -128,7 +128,14 @@ export default function TransactionsPage() {
 
   return (
     <div className="min-h-screen bg-[#121212]">
-      <Header status={status} />
+      <Header
+        status={status}
+        nodes={nodes}
+        selectedNodeUrl={selectedNodeUrl}
+        onSelectNode={selectNode}
+        onAddNode={addNode}
+        onRemoveNode={removeNode}
+      />
       <PageHeader
         title="Transactions List"
         subtitle={currentHeight > 0 ? `Current Height: ${currentHeight.toLocaleString()}` : undefined}

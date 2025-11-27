@@ -9,7 +9,7 @@ import { JsonViewer } from '@/components/ui/JsonViewer';
 import { Table } from '@/components/ui/Table';
 import { Pagination } from '@/components/ui/Pagination';
 import { formatFullTimestamp, formatTokenAmount } from '@/lib/utils';
-import { useZenonWebSocket } from '@/hooks/useZenonWebSocket';
+import { useZenon } from '@/contexts/ZenonProvider';
 import { zenonClient } from '@/lib/zenon-api';
 import type { Pillar, AccountBlock, AccountInfo, Token } from '@/types/zenon';
 
@@ -26,7 +26,7 @@ type TabType = 'transactions' | 'unreceived' | 'zts';
 
 export default function PillarDetailPage() {
   const params = useParams();
-  const { status, currentHeight } = useZenonWebSocket();
+  const { status, currentHeight, nodes, selectedNodeUrl, selectNode, addNode, removeNode } = useZenon();
   const [pillar, setPillar] = useState<Pillar | null>(null);
   const [accountInfo, setAccountInfo] = useState<AccountInfo | null>(null);
   const [transactions, setTransactions] = useState<AccountBlock[]>([]);
@@ -143,7 +143,14 @@ export default function PillarDetailPage() {
 
   return (
     <div className="min-h-screen bg-[#121212]">
-      <Header status={status} />
+      <Header
+        status={status}
+        nodes={nodes}
+        selectedNodeUrl={selectedNodeUrl}
+        onSelectNode={selectNode}
+        onAddNode={addNode}
+        onRemoveNode={removeNode}
+      />
 
       {/* Page Header */}
       <div className="bg-[#1a1a1a] border-b border-[#2a2a2a] py-3 px-4 sm:px-6 lg:px-8">

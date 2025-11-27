@@ -7,12 +7,12 @@ import { Table } from '@/components/ui/Table';
 import { Pagination } from '@/components/ui/Pagination';
 import { HashLink, MomentumHeightLink } from '@/components/ui/HashLink';
 import { formatFullTimestamp } from '@/lib/utils';
-import { useZenonWebSocket } from '@/hooks/useZenonWebSocket';
+import { useZenon } from '@/contexts/ZenonProvider';
 import { zenonClient } from '@/lib/zenon-api';
 import type { Momentum } from '@/types/zenon';
 
 export default function MomentumsPage() {
-  const { status, currentHeight } = useZenonWebSocket();
+  const { status, currentHeight, nodes, selectedNodeUrl, selectNode, addNode, removeNode } = useZenon();
   const [momentums, setMomentums] = useState<Momentum[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(0);
@@ -95,7 +95,14 @@ export default function MomentumsPage() {
 
   return (
     <div className="min-h-screen bg-[#121212]">
-      <Header status={status} />
+      <Header
+        status={status}
+        nodes={nodes}
+        selectedNodeUrl={selectedNodeUrl}
+        onSelectNode={selectNode}
+        onAddNode={addNode}
+        onRemoveNode={removeNode}
+      />
       <PageHeader
         title="Momentums List"
         subtitle={currentHeight > 0 ? `Current Height: ${currentHeight.toLocaleString()}` : undefined}

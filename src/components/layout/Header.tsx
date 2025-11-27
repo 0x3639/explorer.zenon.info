@@ -6,9 +6,16 @@ import { useState } from 'react';
 import type { ConnectionStatus } from '@/types/zenon';
 import { getSearchUrl, getSearchType } from '@/lib/validators';
 import { MobileMenu } from './MobileMenu';
+import { NodeSelector } from './NodeSelector';
+import type { NodeConfig } from '@/hooks/useNodeManager';
 
 interface HeaderProps {
   status: ConnectionStatus;
+  nodes: NodeConfig[];
+  selectedNodeUrl: string;
+  onSelectNode: (url: string) => void;
+  onAddNode: (url: string, name?: string) => { success: boolean; error?: string };
+  onRemoveNode: (url: string) => void;
 }
 
 const navItems = [
@@ -19,7 +26,14 @@ const navItems = [
   { href: '/tokens', label: 'ZTS' },
 ];
 
-export function Header({ status }: HeaderProps) {
+export function Header({
+  status,
+  nodes,
+  selectedNodeUrl,
+  onSelectNode,
+  onAddNode,
+  onRemoveNode,
+}: HeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [showSearch, setShowSearch] = useState(false);
@@ -51,35 +65,6 @@ export function Header({ status }: HeaderProps) {
     }
   };
 
-  const getStatusColor = () => {
-    switch (status) {
-      case 'connected':
-        return 'bg-green-500';
-      case 'connecting':
-        return 'bg-yellow-500 animate-pulse';
-      case 'disconnected':
-        return 'bg-gray-500';
-      case 'error':
-        return 'bg-red-500';
-      default:
-        return 'bg-gray-500';
-    }
-  };
-
-  const getStatusText = () => {
-    switch (status) {
-      case 'connected':
-        return 'Connected';
-      case 'connecting':
-        return 'Connecting...';
-      case 'disconnected':
-        return 'Disconnected';
-      case 'error':
-        return 'Error';
-      default:
-        return 'Unknown';
-    }
-  };
 
   return (
     <header className="bg-[#7fff00] sticky top-0 z-50">
@@ -154,21 +139,15 @@ export function Header({ status }: HeaderProps) {
               </svg>
             </button>
 
-            {/* Connection status */}
-            <div className="flex items-center gap-2 text-black/80">
-              <span className={`w-2 h-2 rounded-full ${getStatusColor()}`} />
-              <span className="text-sm font-medium hidden sm:inline">{getStatusText()}</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
+            {/* Node selector */}
+            <NodeSelector
+              nodes={nodes}
+              selectedUrl={selectedNodeUrl}
+              status={status}
+              onSelectNode={onSelectNode}
+              onAddNode={onAddNode}
+              onRemoveNode={onRemoveNode}
+            />
 
           </div>
         </div>

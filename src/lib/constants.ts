@@ -3,6 +3,11 @@
 export const CONFIG = {
   NODE: {
     DEFAULT_URL: process.env.NEXT_PUBLIC_ZENON_NODE_URL || 'wss://my.hc1node.com:35998',
+    DEFAULT_NODES: [
+      { url: 'wss://my.hc1node.com:35998', name: 'HC1 Node', isDefault: true },
+      { url: 'wss://node.zenonhub.io:35998', name: 'ZenonHub', isDefault: true },
+      { url: 'wss://node.atsocy.com:35998', name: 'Atsocy', isDefault: true },
+    ] as const,
     RECONNECT_MAX_ATTEMPTS: 5,
     RECONNECT_DELAY_MS: 1000,
     REQUEST_TIMEOUT_MS: 30000,
