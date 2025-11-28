@@ -25,7 +25,7 @@ export default function PillarsPage() {
     setLoading(true);
     try {
       const result = await zenonClient.getAllPillars(page, pageSize);
-      let sortedList = [...result.list];
+      const sortedList = [...result.list];
 
       // Sort by weight (default)
       if (sortKey === 'weight') {

@@ -26,7 +26,7 @@ export default function ZTSPage() {
     setLoading(true);
     try {
       const result = await zenonClient.getAllTokens(page, pageSize);
-      let sortedList = [...result.list];
+      const sortedList = [...result.list];
 
       // Sort by total supply (default)
       if (sortKey === 'totalSupply') {
