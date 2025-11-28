@@ -153,3 +153,33 @@ export interface JsonRpcResponse<T = unknown> {
 }
 
 export type ConnectionStatus = 'connecting' | 'connected' | 'disconnected' | 'error';
+
+// Bridge Orchestrator Types
+export interface NetworkStats {
+  wraps: number;
+  unwraps: number;
+}
+
+export interface Orchestrator {
+  ip: string;
+  pillar_name: string;
+  producer_address: string;
+  status: 'online' | 'offline';
+  state: string;
+  state_num: number;
+  network_stats: {
+    bnb: NetworkStats;
+    eth: NetworkStats;
+    supernova: NetworkStats;
+  };
+  error: string | null;
+}
+
+export interface BridgeStatus {
+  timestamp: string;
+  bridge_status: 'online' | 'offline';
+  online_count: number;
+  total_count: number;
+  query_time_seconds: number;
+  orchestrators: Orchestrator[];
+}
