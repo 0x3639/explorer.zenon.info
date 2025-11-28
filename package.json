@@ -4,12 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npx @cloudflare/next-on-pages",
-    "build:next": "next build",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "preview": "npm run build && npx wrangler pages dev",
-    "deploy": "npm run build && npx wrangler pages deploy"
+    "pages:build": "npx @cloudflare/next-on-pages",
+    "preview": "npm run pages:build && npx wrangler pages dev",
+    "deploy": "npm run pages:build && npx wrangler pages deploy"
   },
   "dependencies": {
     "next": "^15.5.2",
