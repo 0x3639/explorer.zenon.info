@@ -51,9 +51,26 @@ export default function MomentumDetailPage() {
       if (/^\d+$/.test(id)) {
         height = parseInt(id, 10);
       } else {
-        // It's a hash - fetch by hash to get the height
-        const momentumByHash = await zenonClient.getMomentumByHash(id);
-        height = momentumByHash.height;
+        // It's a hash - try momentum first, then transaction
+        try {
+          const momentumByHash = await zenonClient.getMomentumByHash(id);
+          height = momentumByHash.height;
+        } catch {
+          // Not a momentum hash, try as transaction hash
+          try {
+            const txBlock = await zenonClient.getAccountBlockByHash(id);
+            if (txBlock) {
+              // Redirect to transaction page
+              router.push(`/transaction/${id}`);
+              return;
+            }
+          } catch {
+            setError('Hash not found as momentum or transaction');
+            return;
+          }
+          setError('Hash not found as momentum or transaction');
+          return;
+        }
       }
 
       // Use getDetailedMomentumsByHeight to get full transaction details
@@ -80,7 +97,7 @@ export default function MomentumDetailPage() {
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, router]);
 
   useEffect(() => {
     if (status === 'connected') {

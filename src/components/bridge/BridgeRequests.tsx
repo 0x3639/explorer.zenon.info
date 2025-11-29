@@ -135,19 +135,10 @@ export function BridgeRequests({ connectionStatus }: BridgeRequestsProps) {
 
     setWrapsLoading(true);
     try {
-      // First fetch to get total count
-      const firstResult = await zenonClient.getAllWrapTokenRequests(0, 1);
-      const total = firstResult.count;
-      setWrapsTotal(total);
-
-      // Calculate page from end (newest items are at higher indices)
-      const totalPages = Math.ceil(total / pageSize);
-      const reversePageIndex = Math.max(0, totalPages - 1 - wrapsPage);
-
-      const result = await zenonClient.getAllWrapTokenRequests(reversePageIndex, pageSize);
-      // Reverse the list so newest (highest height) appears first
-      const reversed = [...result.list].reverse();
-      setWraps(reversed);
+      const result = await zenonClient.getAllWrapTokenRequests(wrapsPage, pageSize);
+      // API returns newest first (key uses inverted height), so use directly
+      setWraps(result.list);
+      setWrapsTotal(result.count);
     } catch (error) {
       console.error('Failed to fetch wrap requests:', error);
     } finally {
@@ -160,19 +151,13 @@ export function BridgeRequests({ connectionStatus }: BridgeRequestsProps) {
 
     setUnwrapsLoading(true);
     try {
-      // First fetch to get total count
-      const firstResult = await zenonClient.getAllUnwrapTokenRequests(0, 1);
-      const total = firstResult.count;
-      setUnwrapsTotal(total);
-
-      // Calculate page from end (newest items are at higher indices)
-      const totalPages = Math.ceil(total / pageSize);
-      const reversePageIndex = Math.max(0, totalPages - 1 - unwrapsPage);
-
-      const result = await zenonClient.getAllUnwrapTokenRequests(reversePageIndex, pageSize);
-      // Reverse the list so newest (highest height) appears first
-      const reversed = [...result.list].reverse();
-      setUnwraps(reversed);
+      const result = await zenonClient.getAllUnwrapTokenRequests(unwrapsPage, pageSize);
+      // API returns in tx hash order, sort by registrationMomentumHeight descending
+      const sorted = [...result.list].sort(
+        (a, b) => b.registrationMomentumHeight - a.registrationMomentumHeight
+      );
+      setUnwraps(sorted);
+      setUnwrapsTotal(result.count);
     } catch (error) {
       console.error('Failed to fetch unwrap requests:', error);
     } finally {
@@ -212,11 +197,11 @@ export function BridgeRequests({ connectionStatus }: BridgeRequestsProps) {
   const wrapColumns = [
     {
       key: 'id',
-      header: 'ID',
+      header: 'Tx Hash',
       mobilePrimary: true,
       render: (item: WrapRequest) => (
         <span className="inline-flex items-center gap-1 group">
-          <HashLink hash={item.id} type="hash" linkToDetail showCopy />
+          <HashLink hash={item.id} type="transaction" linkToDetail showCopy />
         </span>
       ),
     },
@@ -279,10 +264,20 @@ export function BridgeRequests({ connectionStatus }: BridgeRequestsProps) {
   const unwrapColumns = [
     {
       key: 'hash',
-      header: 'Hash',
+      header: 'ETH Tx Hash',
       mobilePrimary: true,
       render: (item: UnwrapRequest) => (
-        <HashLink hash={item.transactionHash} type="hash" linkToDetail showCopy />
+        <span className="inline-flex items-center gap-1 group">
+          <a
+            href={`https://etherscan.io/tx/0x${item.transactionHash}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-mono text-sm text-[#7fff00] hover:underline"
+          >
+            {truncateHash(item.transactionHash, 8, 6)}
+          </a>
+          <CopyButton text={`0x${item.transactionHash}`} />
+        </span>
       ),
     },
     {
