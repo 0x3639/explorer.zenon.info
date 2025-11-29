@@ -135,11 +135,19 @@ export function BridgeRequests({ connectionStatus }: BridgeRequestsProps) {
 
     setWrapsLoading(true);
     try {
-      const result = await zenonClient.getAllWrapTokenRequests(wrapsPage, pageSize);
-      // Sort by creationMomentumHeight descending (newest first)
-      const sorted = [...result.list].sort((a, b) => b.creationMomentumHeight - a.creationMomentumHeight);
-      setWraps(sorted);
-      setWrapsTotal(result.count);
+      // First fetch to get total count
+      const firstResult = await zenonClient.getAllWrapTokenRequests(0, 1);
+      const total = firstResult.count;
+      setWrapsTotal(total);
+
+      // Calculate page from end (newest items are at higher indices)
+      const totalPages = Math.ceil(total / pageSize);
+      const reversePageIndex = Math.max(0, totalPages - 1 - wrapsPage);
+
+      const result = await zenonClient.getAllWrapTokenRequests(reversePageIndex, pageSize);
+      // Reverse the list so newest (highest height) appears first
+      const reversed = [...result.list].reverse();
+      setWraps(reversed);
     } catch (error) {
       console.error('Failed to fetch wrap requests:', error);
     } finally {
@@ -152,11 +160,19 @@ export function BridgeRequests({ connectionStatus }: BridgeRequestsProps) {
 
     setUnwrapsLoading(true);
     try {
-      const result = await zenonClient.getAllUnwrapTokenRequests(unwrapsPage, pageSize);
-      // Sort by registrationMomentumHeight descending (newest first)
-      const sorted = [...result.list].sort((a, b) => b.registrationMomentumHeight - a.registrationMomentumHeight);
-      setUnwraps(sorted);
-      setUnwrapsTotal(result.count);
+      // First fetch to get total count
+      const firstResult = await zenonClient.getAllUnwrapTokenRequests(0, 1);
+      const total = firstResult.count;
+      setUnwrapsTotal(total);
+
+      // Calculate page from end (newest items are at higher indices)
+      const totalPages = Math.ceil(total / pageSize);
+      const reversePageIndex = Math.max(0, totalPages - 1 - unwrapsPage);
+
+      const result = await zenonClient.getAllUnwrapTokenRequests(reversePageIndex, pageSize);
+      // Reverse the list so newest (highest height) appears first
+      const reversed = [...result.list].reverse();
+      setUnwraps(reversed);
     } catch (error) {
       console.error('Failed to fetch unwrap requests:', error);
     } finally {
