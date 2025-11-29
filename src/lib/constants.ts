@@ -60,6 +60,12 @@ export const BRIDGE_CONFIG = {
   MIN_ONLINE_FOR_BRIDGE: 16,
 } as const;
 
+// Bridge API Configuration (centralized API endpoint)
+export const BRIDGE_API_CONFIG = {
+  URL: process.env.BRIDGE_API_URL || 'https://bridgeapi.zenon.info/api/v1/orchestrators/status',
+  TIMEOUT_MS: 10000,
+} as const;
+
 // State mapping for orchestrator status
 export const ORCHESTRATOR_STATE_MAP: Record<number, string> = {
   0: 'LiveState',

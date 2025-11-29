@@ -10,8 +10,16 @@ import { BridgeSummary } from '@/components/bridge/BridgeSummary';
 import { StatusBadge } from '@/components/bridge/StatusBadge';
 import { fetchBridgeStatus } from '@/lib/bridge-api';
 import { BRIDGE_CONFIG } from '@/lib/constants';
+import { formatRelativeTime } from '@/lib/utils';
 import { useZenon } from '@/contexts/ZenonProvider';
 import type { BridgeStatus, Orchestrator } from '@/types/zenon';
+
+// Helper to convert ISO timestamp to relative time
+function formatLastChecked(isoString?: string): string {
+  if (!isoString) return '-';
+  const timestamp = Math.floor(new Date(isoString).getTime() / 1000);
+  return formatRelativeTime(timestamp);
+}
 
 export default function BridgePage() {
   const [data, setData] = useState<BridgeStatus | null>(null);
@@ -113,6 +121,27 @@ export default function BridgePage() {
       render: (item: Orchestrator) => (
         <span className="text-gray-300 text-sm">
           {item.network_stats.supernova.wraps}/{item.network_stats.supernova.unwraps}
+        </span>
+      ),
+    },
+    {
+      key: 'response_time',
+      header: 'Resp Time',
+      mobileLabel: false as const,
+      render: (item: Orchestrator) =>
+        item.response_time_ms !== undefined ? (
+          <span className="text-gray-300 text-sm">{item.response_time_ms} ms</span>
+        ) : (
+          <span className="text-gray-500">-</span>
+        ),
+    },
+    {
+      key: 'last_checked',
+      header: 'Last Checked',
+      mobileLabel: false as const,
+      render: (item: Orchestrator) => (
+        <span className="text-gray-400 text-sm" title={item.last_checked}>
+          {formatLastChecked(item.last_checked)}
         </span>
       ),
     },

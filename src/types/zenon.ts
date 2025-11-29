@@ -173,6 +173,8 @@ export interface Orchestrator {
     supernova: NetworkStats;
   };
   error: string | null;
+  response_time_ms?: number;
+  last_checked?: string;
 }
 
 export interface BridgeStatus {
