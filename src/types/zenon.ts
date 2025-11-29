@@ -185,3 +185,46 @@ export interface BridgeStatus {
   query_time_seconds: number;
   orchestrators: Orchestrator[];
 }
+
+// Bridge Wrap/Unwrap Request Types
+export interface WrapRequest {
+  id: string;
+  networkClass: number;
+  chainId: number;
+  toAddress: string;
+  tokenStandard: string;
+  tokenAddress: string;
+  amount: string;
+  fee: string;
+  signature: string;
+  creationMomentumHeight: number;
+  token: Token;
+  confirmationsToFinality: number;
+}
+
+export interface WrapRequestList {
+  count: number;
+  list: WrapRequest[];
+}
+
+export interface UnwrapRequest {
+  registrationMomentumHeight: number;
+  networkClass: number;
+  chainId: number;
+  transactionHash: string;
+  logIndex: number;
+  toAddress: string;
+  tokenStandard: string;
+  tokenAddress: string;
+  amount: string;
+  signature: string;
+  redeemed: number;
+  revoked: number;
+  token: Token;
+  redeemableIn: number;
+}
+
+export interface UnwrapRequestList {
+  count: number;
+  list: UnwrapRequest[];
+}

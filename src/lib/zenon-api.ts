@@ -12,6 +12,8 @@ import type {
   AccountBlockList,
   AccountInfo,
   SyncInfo,
+  WrapRequestList,
+  UnwrapRequestList,
 } from '@/types/zenon';
 
 const DEFAULT_NODE = process.env.NEXT_PUBLIC_ZENON_NODE_URL || 'wss://my.hc1node.com:35998';
@@ -435,6 +437,25 @@ class ZenonClient {
 
   unsubscribe(subscriptionId: string) {
     this.subscriptionHandlers.delete(subscriptionId);
+  }
+
+  // Bridge Methods
+  async getAllWrapTokenRequests(pageIndex: number, pageSize: number): Promise<WrapRequestList> {
+    return this.sendCached<WrapRequestList>(
+      `bridge:wraps:${pageIndex}:${pageSize}`,
+      CACHE_TTL.LIST,
+      'embedded.bridge.getAllWrapTokenRequests',
+      [pageIndex, pageSize]
+    );
+  }
+
+  async getAllUnwrapTokenRequests(pageIndex: number, pageSize: number): Promise<UnwrapRequestList> {
+    return this.sendCached<UnwrapRequestList>(
+      `bridge:unwraps:${pageIndex}:${pageSize}`,
+      CACHE_TTL.LIST,
+      'embedded.bridge.getAllUnwrapTokenRequests',
+      [pageIndex, pageSize]
+    );
   }
 }
 
