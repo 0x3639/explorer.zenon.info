@@ -24,6 +24,7 @@ const navItems = [
   { href: '/sentinels', label: 'Sentinels' },
   { href: '/pillars', label: 'Pillars' },
   { href: '/tokens', label: 'ZTS' },
+  { href: '/bridge', label: 'Bridge' },
 ];
 
 export function Header({
