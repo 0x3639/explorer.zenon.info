@@ -7,6 +7,7 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { Table } from '@/components/ui/Table';
 import { HashLink } from '@/components/ui/HashLink';
 import { BridgeSummary } from '@/components/bridge/BridgeSummary';
+import { BridgeRequests } from '@/components/bridge/BridgeRequests';
 import { StatusBadge } from '@/components/bridge/StatusBadge';
 import { fetchBridgeStatus } from '@/lib/bridge-api';
 import { BRIDGE_CONFIG } from '@/lib/constants';
@@ -199,6 +200,8 @@ export default function BridgePage() {
         )}
 
         <BridgeSummary data={data} loading={loading} />
+
+        <BridgeRequests connectionStatus={status} />
 
         <Table
           columns={columns}
