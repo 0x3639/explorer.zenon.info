@@ -13,6 +13,7 @@ import { Pagination } from '@/components/ui/Pagination';
 import { formatFullTimestamp, formatTokenAmount, copyToClipboard } from '@/lib/utils';
 import { useZenon } from '@/contexts/ZenonProvider';
 import { zenonClient } from '@/lib/zenon-api';
+import { AddressBridgeRequests } from '@/components/bridge/AddressBridgeRequests';
 import type { AccountInfo, AccountBlock, Token } from '@/types/zenon';
 
 // Block type mapping
@@ -24,7 +25,7 @@ const BLOCK_TYPES: Record<number, string> = {
   5: 'CONTRACT RECEIVE',
 };
 
-type TabType = 'transactions' | 'unreceived' | 'zts';
+type TabType = 'transactions' | 'unreceived' | 'zts' | 'bridge';
 
 export default function AddressDetailPage() {
   const params = useParams();
@@ -136,6 +137,7 @@ export default function AddressDetailPage() {
     { id: 'transactions', label: 'Transactions' },
     { id: 'unreceived', label: 'Unreceived Transactions' },
     { id: 'zts', label: 'ZTS' },
+    { id: 'bridge', label: 'Bridge' },
   ];
 
   return (
@@ -551,6 +553,10 @@ export default function AddressDetailPage() {
                   </div>
                 )}
               </div>
+            )}
+
+            {activeTab === 'bridge' && (
+              <AddressBridgeRequests address={address} connectionStatus={status} />
             )}
 
             {/* Raw Data */}
