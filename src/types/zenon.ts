@@ -228,3 +228,27 @@ export interface UnwrapRequestList {
   count: number;
   list: UnwrapRequest[];
 }
+
+// Bridge API Response Types
+export interface BridgeRequestsResponse<T> {
+  count: number;
+  page: number;
+  pageSize: number;
+  list: T[];
+  source: 'api' | 'rpc';
+}
+
+// Bridge filter types
+export type WrapFilter = 'all' | 'pending' | 'confirmed';
+export type UnwrapFilter = 'all' | 'pending' | 'redeemed' | 'revoked';
+
+export interface BridgeFilters {
+  chainId?: number | 'all';
+  tokenSymbol?: string;
+  toAddress?: string;
+  // Wrap-specific
+  confirmationsToFinality?: number;
+  // Unwrap-specific
+  redeemed?: boolean;
+  revoked?: boolean;
+}

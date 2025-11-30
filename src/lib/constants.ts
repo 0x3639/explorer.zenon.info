@@ -63,8 +63,18 @@ export const BRIDGE_CONFIG = {
 // Bridge API Configuration (centralized API endpoint)
 export const BRIDGE_API_CONFIG = {
   URL: process.env.BRIDGE_API_URL || 'https://bridgeapi.zenon.info/api/v1/orchestrators/status',
+  REQUESTS_URL: 'https://bridgeapi.zenon.info/api/v1/bridge',
   TIMEOUT_MS: 10000,
 } as const;
+
+// Bridge chain configurations
+export const BRIDGE_CHAINS: Record<number, { name: string; explorer: string; txPath: string; addressPath: string }> = {
+  1: { name: 'Ethereum', explorer: 'https://etherscan.io', txPath: '/tx/', addressPath: '/address/' },
+  56: { name: 'BSC', explorer: 'https://bscscan.com', txPath: '/tx/', addressPath: '/address/' },
+} as const;
+
+// Available tokens for bridge filtering
+export const BRIDGE_TOKENS = ['ZNN', 'QSR', 'wZNN', 'wQSR'] as const;
 
 // State mapping for orchestrator status
 export const ORCHESTRATOR_STATE_MAP: Record<number, string> = {
