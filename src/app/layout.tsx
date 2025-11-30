@@ -16,9 +16,6 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Zenon Explorer",
   description: "Explore the Zenon Network - Momentums, Pillars, Sentinels, and ZTS Tokens",
-  icons: {
-    icon: "/favicon.ico",
-  },
 };
 
 export default function RootLayout({
