@@ -6,8 +6,7 @@
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "pages_build_output_dir": ".open-next",
   "assets": {
-    "directory": ".open-next/assets",
-    "binding": "ASSETS"
+    "directory": ".open-next/assets"
   },
   "vars": {
     "BRIDGE_API_URL": "https://bridgeapi.zenon.info/api/v1/orchestrators/status"
