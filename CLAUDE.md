@@ -10,10 +10,10 @@ npm run dev              # Start Next.js dev server at localhost:3000
 
 # Production builds
 npm run build            # Standard Next.js build
-npm run pages:build      # Cloudflare Pages build (uses @cloudflare/next-on-pages)
+npm run preview          # Build for Cloudflare Workers and preview locally
 
-# Local Cloudflare preview
-npm run pages:build && npm run preview   # Serves at localhost:8788
+# Deploy to Cloudflare
+npm run deploy           # Build and deploy to Cloudflare Workers
 
 # Linting
 npm run lint
@@ -53,7 +53,7 @@ ZenonProvider (context)
 
 ### Routing Structure
 
-Dynamic routes use Edge Runtime for Cloudflare deployment:
+Dynamic routes use Node.js runtime via @opennextjs/cloudflare:
 
 ```
 /                         # Dashboard (momentums + transactions lists)
@@ -96,13 +96,13 @@ Dashboard components (`MomentumsList`, `TransactionsList`) poll every 10 seconds
 
 1. **Reverse Pagination**: Momentums display newest-first by calculating `height - offset` rather than offset-based
 2. **Client-Side Transaction Pagination**: Fetches 1000 momentums, extracts blocks, paginates in-memory
-3. **Edge Runtime**: Detail pages export `runtime = 'edge'` for Cloudflare compatibility
-4. **Hash Resolution**: `/hash/[id]` page determines if hash is momentum or transaction, then displays appropriate detail
+3. **Hash Resolution**: `/hash/[id]` page determines if hash is momentum or transaction, then displays appropriate detail
 
 ## Deployment
 
-Deployed to Cloudflare Pages:
-- Build command: `npm run pages:build`
-- Output directory: `.vercel/output/static`
+Deployed to Cloudflare Workers via `@opennextjs/cloudflare`:
+- Build command: `opennextjs-cloudflare build`
+- Output directory: `.open-next/`
+- Configuration: `wrangler.jsonc` and `open-next.config.ts`
 
-The `@cloudflare/next-on-pages` adapter converts Next.js to Cloudflare Workers format.
+The `@opennextjs/cloudflare` adapter converts Next.js to Cloudflare Workers format with full Node.js runtime support.

@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { BRIDGE_API_CONFIG } from '@/lib/constants';
 
-export const runtime = 'edge';
-
 const BRIDGE_REQUESTS_BASE_URL = 'https://bridgeapi.zenon.info/api/v1/bridge';
 
 // API response types from the Bridge API
