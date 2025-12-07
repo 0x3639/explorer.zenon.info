@@ -1,6 +1,6 @@
 # Zenon Explorer
 
-A blockchain explorer for the Zenon Network, built with Next.js 15 and deployed on Cloudflare Pages.
+A blockchain explorer for the Zenon Network, built with Next.js 15 and deployed on Cloudflare Workers.
 
 ## Features
 
@@ -8,6 +8,7 @@ A blockchain explorer for the Zenon Network, built with Next.js 15 and deployed 
 - Address details with balance and transaction history
 - Pillar and Sentinel information
 - ZTS token listings
+- Bridge status and request tracking
 - Multi-node support with persistent selection
 - Responsive design for mobile and desktop
 
@@ -28,33 +29,32 @@ Open [http://localhost:3000](http://localhost:3000) to view the explorer.
 # Standard Next.js build
 npm run build
 
-# Cloudflare Pages build
-npm run pages:build
+# Build for Cloudflare Workers
+npx @opennextjs/cloudflare build
 ```
 
-### Local Preview (Cloudflare)
+### Local Preview (Cloudflare Workers)
 
 ```bash
-npm run pages:build
 npm run preview
 ```
 
-This starts a local Wrangler server at [http://localhost:8788](http://localhost:8788).
+This builds and starts a local Wrangler server at [http://localhost:8787](http://localhost:8787).
 
 ## Deployment
 
-### Cloudflare Pages
+### Cloudflare Workers
 
-1. Connect your GitHub repository to Cloudflare Pages
+1. Connect your GitHub repository to Cloudflare Workers
 2. Configure build settings:
-   - **Build command:** `npm run pages:build`
-   - **Build output directory:** `.vercel/output/static`
+   - **Build command:** `npx @opennextjs/cloudflare build`
+   - **Deploy command:** `npx wrangler deploy`
 3. Deploy
 
 ### Environment
 
 - Node.js 22+
-- Next.js 15.5.2
+- Next.js 15.5.7
 - React 18
 
 ## Node Configuration
@@ -71,7 +71,7 @@ Users can add custom nodes through the UI. Node selection is persisted in localS
 
 - **Framework:** Next.js 15 (App Router)
 - **Styling:** Tailwind CSS 4
-- **Deployment:** Cloudflare Pages with Edge Runtime
+- **Deployment:** Cloudflare Workers via @opennextjs/cloudflare
 - **API:** Zenon Network JSON-RPC over WebSocket
 
 ## License
