@@ -8,8 +8,6 @@ import {
 } from '@/lib/constants';
 import type { Orchestrator, BridgeStatus } from '@/types/zenon';
 
-export const runtime = 'edge';
-
 // Types for the external Bridge API response
 interface ExternalNetworkStat {
   network: string;
